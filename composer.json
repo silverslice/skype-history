@@ -1,0 +1,22 @@
+{
+    "name": "silverslice/skype-history",
+    "description": "Skype history viewer",
+    "keywords": ["skype"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Igor Mikheev",
+            "email": "silver_slice@mail.ru"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3",
+        "ext-pdo": "*",
+        "ext-pdo_sqlite": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Silverslice\\": "src/"
+        }
+    }
+}
