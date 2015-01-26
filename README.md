@@ -11,7 +11,7 @@ small library to get unavailable history.
 
 1. Require library as a dependency using Composer:
 
-    `php composer.phar require silverslice/skype-history`
+    `php composer.phar require silverslice/skype-history:dev-master`
 
 1. Install SkypeHistory:
 
