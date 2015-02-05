@@ -2,8 +2,6 @@
 
 namespace Silverslice\SkypeHistory;
 
-use PDO;
-
 /**
  * Skype history reader
  */
@@ -11,7 +9,7 @@ use PDO;
 class Reader
 {
     /**
-     * @var PDO
+     * @var \PDO
      */
     protected $pdo;
 
@@ -39,7 +37,7 @@ class Reader
             ORDER BY lastonline_timestamp DESC
         ");
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     /**
@@ -58,7 +56,7 @@ class Reader
             ORDER BY lastonline_timestamp DESC
         ");
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     /**
@@ -89,7 +87,7 @@ class Reader
         ");
         $stmt->execute(array($login, $startDate, $endDate));
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     /**
@@ -109,7 +107,7 @@ class Reader
             return false;
         }
 
-        $this->pdo = new PDO('sqlite:' . $dbFile);
+        $this->pdo = new \PDO('sqlite:' . $dbFile);
 
         return true;
     }
