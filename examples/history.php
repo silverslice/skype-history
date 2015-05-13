@@ -68,11 +68,11 @@ $messages = $reader->getHistory($login, strtotime('-5 year'), time());
 
     <div class="contacts">
         <?php foreach ($contacts as $c): ?>
-            <div class="contact"><a href="<?= $url ?>?login=<?= $c['skypename'] ?>" title="<?= $c['fullname'] ?>">
+            <div class="contact"><a href="<?= $url ?>?login=<?= $c['skypename'] ?>" title="<?= htmlspecialchars($c['fullname']) ?>">
                     <?php if ($c['skypename'] == $login): ?>
-                        <strong><?= $c['skypename'] ?></strong>
+                        <strong><?= htmlspecialchars($c['skypename']) ?></strong>
                     <?php else: ?>
-                        <?= $c['skypename'] ?>
+                        <?= htmlspecialchars($c['skypename']) ?>
                     <?php endif; ?>
             </a></div>
         <?php endforeach; ?>
@@ -86,7 +86,7 @@ $messages = $reader->getHistory($login, strtotime('-5 year'), time());
                 <div class="date"><?= $date ?></div>
             <?php endif; ?>
             <div class="message <?php if ($m['displayname'] != $m['from_dispname']): ?>author<?php endif; ?>">
-                <?= $m['text'] ?>
+                <?= htmlspecialchars($m['text']) ?>
             </div>
             <?php $last_date = $date ?>
         <?php endforeach; ?>
