@@ -86,7 +86,7 @@ $messages = $reader->getHistory($login, strtotime('-5 year'), time());
                 <div class="date"><?= $date ?></div>
             <?php endif; ?>
             <div class="message <?php if ($m['displayname'] != $m['from_dispname']): ?>author<?php endif; ?>">
-                <?= htmlspecialchars($m['text']) ?>
+                <?= $m['text'] ?>
             </div>
             <?php $last_date = $date ?>
         <?php endforeach; ?>
