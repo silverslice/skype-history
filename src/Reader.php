@@ -14,9 +14,7 @@ class Reader
     protected $pdo;
 
     /**
-     * Skype main.db file
-     *
-     * @param string $dbFile
+     * @param string $dbFile  Skype main.db file
      */
     public function __construct($dbFile)
     {
@@ -24,7 +22,7 @@ class Reader
     }
 
     /**
-     * Return all contacts
+     * Returns all contacts
      *
      * @return array
      */
@@ -37,11 +35,29 @@ class Reader
             ORDER BY lastonline_timestamp DESC
         ");
 
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return $stmt->fetchAll();
     }
 
     /**
-     * Return active contacts that is contacts having messages in history
+     * Returns contact by skype login
+     *
+     * @param string login
+     * @return array
+     */
+    public function getContactByLogin($login)
+    {
+        $stmt = $this->pdo->query("
+            SELECT *
+            FROM contacts
+            WHERE skypename = ?
+        ");
+        $stmt->execute(array($login));
+
+        return $stmt->fetch();
+    }
+
+    /**
+     * Returns active contacts that is contacts having messages in history
      *
      * @return array
      */
@@ -56,11 +72,11 @@ class Reader
             ORDER BY lastonline_timestamp DESC
         ");
 
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return $stmt->fetchAll();
     }
 
     /**
-     * Return message's history for contact for a specified period of time
+     * Returns message's history for contact for a specified period of time
      *
      * @param string $login    Contact login
      * @param int $startDate   Start date (as timestamp) for history
@@ -87,7 +103,32 @@ class Reader
         ");
         $stmt->execute(array($login, $startDate, $endDate));
 
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Returns messages with specified query in the body
+     *
+     * @param $query
+     * @return array
+     */
+    public function findInHistory($query)
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT
+                conversations.id, conversations.displayname, messages.from_dispname,
+                messages.timestamp,
+                messages.body_xml as text
+            FROM conversations
+            INNER JOIN messages on conversations.id = messages.convo_id
+
+            WHERE messages.body_xml LIKE ?
+            ORDER BY messages.timestamp
+        ");
+
+        $stmt->execute(array("%$query%"));
+
+        return $stmt->fetchAll();
     }
 
     /**
@@ -108,6 +149,7 @@ class Reader
         }
 
         $this->pdo = new \PDO('sqlite:' . $dbFile);
+        $this->pdo->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
 
         return true;
     }

@@ -18,6 +18,7 @@ $login = isset($_GET['login']) ? $_GET['login'] : '';
 $reader = new Reader('data/main.db');
 $contacts = $reader->getActiveContacts();
 $messages = $reader->getHistory($login, strtotime('-5 year'), time());
+$contact  = $reader->getContactByLogin($login);
 
 ?>
 
@@ -25,7 +26,7 @@ $messages = $reader->getHistory($login, strtotime('-5 year'), time());
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Skype</title>
+    <title>Skype history</title>
 </head>
 <body>
     <style>
@@ -63,22 +64,24 @@ $messages = $reader->getHistory($login, strtotime('-5 year'), time());
         .messages {
             width: 80%;
             float: left;
+            padding-left: 20px;
         }
     </style>
 
     <div class="contacts">
         <?php foreach ($contacts as $c): ?>
             <div class="contact"><a href="<?= $url ?>?login=<?= $c['skypename'] ?>" title="<?= htmlspecialchars($c['fullname']) ?>">
-                    <?php if ($c['skypename'] == $login): ?>
-                        <strong><?= htmlspecialchars($c['skypename']) ?></strong>
-                    <?php else: ?>
-                        <?= htmlspecialchars($c['skypename']) ?>
-                    <?php endif; ?>
+                <?php if ($c['skypename'] == $login): ?>
+                    <strong><?= htmlspecialchars($c['skypename']) ?></strong>
+                <?php else: ?>
+                    <?= htmlspecialchars($c['skypename']) ?>
+                <?php endif; ?>
             </a></div>
         <?php endforeach; ?>
     </div>
 
     <div class="messages">
+        <h3><img src="http://api.skype.com/users/<?= $contact['skypename'] ?>/profile/avatar" alt=""> <?= $contact['skypename'] ?>, <?= $contact['fullname'] ?></h3>
         <?php $last_date = 0; ?>
         <?php foreach ($messages as $m) : ?>
             <?php $date = date('d.m.Y', $m['timestamp']); ?>
