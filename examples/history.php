@@ -13,12 +13,12 @@ date_default_timezone_set('Asia/Vladivostok');
 header('Content-Type: text/html; charset=utf-8');
 
 $url = $_SERVER['PHP_SELF'];
-$login = isset($_GET['login']) ? $_GET['login'] : '';
+$id = isset($_GET['id']) ? $_GET['id'] : '';
 
 $reader = new Reader('data/main.db');
-$contacts = $reader->getActiveContacts();
-$messages = $reader->getHistory($login, strtotime('-5 year'), time());
-$contact  = $reader->getContactByLogin($login);
+$conversations = $reader->getConversations();
+$messages = $reader->getHistory($id, strtotime('-5 year'), time());
+$conversation = $reader->getConversation($id);
 
 ?>
 
@@ -54,6 +54,10 @@ $contact  = $reader->getContactByLogin($login);
             color: darkblue;
             margin-left: 30px;
         }
+        .message .login {
+            color: grey;
+            font-size: 0.9em;
+        }
 
         .contacts {
             width: 15%;
@@ -69,30 +73,33 @@ $contact  = $reader->getContactByLogin($login);
     </style>
 
     <div class="contacts">
-        <?php foreach ($contacts as $c): ?>
-            <div class="contact"><a href="<?= $url ?>?login=<?= $c['skypename'] ?>" title="<?= htmlspecialchars($c['fullname']) ?>">
-                <?php if ($c['skypename'] == $login): ?>
-                    <strong><?= htmlspecialchars($c['skypename']) ?></strong>
+        <?php foreach ($conversations as $c): ?>
+            <div class="contact"><a href="<?= $url ?>?id=<?= $c['id'] ?>" title="<?= htmlspecialchars($c['identity']) ?>">
+                <?php if ($c['id'] == $id): ?>
+                    <strong><?= htmlspecialchars($c['displayname']) ?></strong>
                 <?php else: ?>
-                    <?= htmlspecialchars($c['skypename']) ?>
+                    <?= htmlspecialchars($c['displayname']) ?>
                 <?php endif; ?>
             </a></div>
         <?php endforeach; ?>
     </div>
 
-    <div class="messages">
-        <h3><img src="http://api.skype.com/users/<?= $contact['skypename'] ?>/profile/avatar" alt=""> <?= $contact['skypename'] ?>, <?= $contact['fullname'] ?></h3>
-        <?php $last_date = 0; ?>
-        <?php foreach ($messages as $m) : ?>
-            <?php $date = date('d.m.Y', $m['timestamp']); ?>
-            <?php if ($date != $last_date): ?>
-                <div class="date"><?= $date ?></div>
-            <?php endif; ?>
-            <div class="message <?php if ($m['displayname'] != $m['from_dispname']): ?>author<?php endif; ?>">
-                <?= $m['text'] ?>
-            </div>
-            <?php $last_date = $date ?>
-        <?php endforeach; ?>
-    </div>
+    <?php if ($messages): ?>
+        <div class="messages">
+            <h3><img src="http://api.skype.com/users/<?= $conversation['identity'] ?>/profile/avatar" alt=""> <?= $conversation['identity'] ?>, <?= $conversation['displayname'] ?></h3>
+            <?php $last_date = 0; ?>
+            <?php foreach ($messages as $m) : ?>
+                <?php $date = date('d.m.Y', $m['timestamp']); ?>
+                <?php if ($date != $last_date): ?>
+                    <div class="date"><?= $date ?></div>
+                <?php endif; ?>
+                <div class="message <?php if ($m['displayname'] != $m['from_dispname']): ?>author<?php endif; ?>">
+                    <span class="login"><?= $m['from_dispname'] ?>: </span>
+                    <?= $m['text'] ?>
+                </div>
+                <?php $last_date = $date ?>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
 </body>
 </html>

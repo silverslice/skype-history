@@ -57,6 +57,24 @@ class Reader
     }
 
     /**
+     * Returns info about conversation
+     *
+     * @param int id
+     * @return array
+     */
+    public function getConversation($id)
+    {
+        $stmt = $this->pdo->query("
+            SELECT *
+            FROM conversations
+            WHERE id = ?
+        ");
+        $stmt->execute(array($id));
+
+        return $stmt->fetch();
+    }
+
+    /**
      * Returns active contacts that is contacts having messages in history
      *
      * @return array
@@ -75,16 +93,26 @@ class Reader
         return $stmt->fetchAll();
     }
 
+    public function getConversations() 
+    {
+        $stmt = $this->pdo->query("
+            SELECT id, identity, displayname
+            FROM conversations
+        ");
+
+        return $stmt->fetchAll();
+    }
+
     /**
-     * Returns message's history for contact for a specified period of time
+     * Returns history of messages for the conversation id in a specified period of time
      *
-     * @param string $login    Contact login
+     * @param int $conversationId    Conversation Id
      * @param int $startDate   Start date (as timestamp) for history
      * @param int $endDate     End date (as timestamp) for history, default now
      *
      * @return array
      */
-    public function getHistory($login, $startDate, $endDate = 0)
+    public function getHistory($conversationId, $startDate, $endDate = 0)
     {
         if (!$endDate) {
             $endDate = time();
@@ -97,11 +125,11 @@ class Reader
             FROM conversations
             INNER JOIN messages on conversations.id = messages.convo_id
 
-            WHERE conversations.identity = ?
+            WHERE conversations.id = ?
             AND (timestamp >= ? AND timestamp <= ?)
             ORDER BY messages.timestamp
         ");
-        $stmt->execute(array($login, $startDate, $endDate));
+        $stmt->execute(array($conversationId, $startDate, $endDate));
 
         return $stmt->fetchAll();
     }
