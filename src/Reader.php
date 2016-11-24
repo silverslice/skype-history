@@ -93,12 +93,14 @@ class Reader
         return $stmt->fetchAll();
     }
 
-    public function getConversations() 
+    public function getConversations($lastActivityTimestamp = 0)
     {
         $stmt = $this->pdo->query("
             SELECT id, identity, displayname
-            FROM conversations
+            FROM conversations 
+            WHERE last_activity_timestamp > ?
         ");
+        $stmt->execute(array($lastActivityTimestamp));
 
         return $stmt->fetchAll();
     }

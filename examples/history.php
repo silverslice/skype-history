@@ -14,10 +14,12 @@ header('Content-Type: text/html; charset=utf-8');
 
 $url = $_SERVER['PHP_SELF'];
 $id = isset($_GET['id']) ? $_GET['id'] : '';
+$startDate = isset($_GET['start']) ? strtotime($_GET['start']) : strtotime('-1 year');
+$endDate   = isset($_GET['end'])   ? strtotime($_GET['end']) : time();
 
 $reader = new Reader('data/main.db');
-$conversations = $reader->getConversations();
-$messages = $reader->getHistory($id, strtotime('-5 year'), time());
+$conversations = $reader->getConversations(strtotime('-10 month'));
+$messages = $reader->getHistory($id, $startDate, $endDate);
 $conversation = $reader->getConversation($id);
 
 ?>
@@ -95,7 +97,7 @@ $conversation = $reader->getConversation($id);
                 <?php endif; ?>
                 <div class="message <?php if ($m['displayname'] != $m['from_dispname']): ?>author<?php endif; ?>">
                     <span class="login"><?= $m['from_dispname'] ?>: </span>
-                    <?= $m['text'] ?>
+                    <?= nl2br($m['text']) ?>
                 </div>
                 <?php $last_date = $date ?>
             <?php endforeach; ?>

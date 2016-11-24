@@ -13,10 +13,10 @@ date_default_timezone_set('Asia/Vladivostok');
 header('Content-Type: text/html; charset=utf-8');
 
 $messages = [];
-$query = isset($_POST['query']) ? $_POST['query'] : '';
+$query = isset($_POST['search_query']) ? $_POST['search_query'] : '';
 if ($query) {
     $reader = new Reader('data/main.db');
-    $messages = $reader->findInHistory($_POST['query']);
+    $messages = $reader->findInHistory($query);
 }
 ?>
 
@@ -72,7 +72,7 @@ if ($query) {
     </style>
 
     <form action="" method="post">
-        <input type="text" name="query" placeholder="Your query" value="<?php if ($query): ?><?= htmlspecialchars($query) ?><?php endif; ?>"> <input type="submit" value="find"/>
+        <input type="text" name="search_query" placeholder="Your query" value="<?php if ($query): ?><?= htmlspecialchars($query) ?><?php endif; ?>"> <input type="submit" value="find"/>
     </form>
 
 
@@ -80,8 +80,13 @@ if ($query) {
         <div class="messages">
             <?php $last_date = 0; ?>
             <?php foreach ($messages as $m) : ?>
-                <?php $date = date('d.m.Y H:i', $m['timestamp']); ?>
-                <div class="date"><?= $date ?>, <span class="author"><?= $m['from_dispname'] . ' - ' . $m['displayname'] ?></span></div>
+                <?php $dateTime = date('d.m.Y H:i', $m['timestamp']); ?>
+                <?php $startDate = date('d.m.Y', $m['timestamp']); ?>
+                <?php $endDate = date('d.m.Y', strtotime('+1 day', $m['timestamp'])); ?>
+                <div class="date"><?= $dateTime ?>,
+                    <span class="author"><?= $m['from_dispname'] . ' - ' . $m['displayname'] ?></span>
+                    <a href="history.php?id=<?= $m['id'] ?>&start=<?= $startDate ?>&end=<?= $endDate ?>">&rarr;</a>
+                </div>
 
                 <div class="message <?php if ($m['displayname'] != $m['from_dispname']): ?>author<?php endif; ?>">
                     <?= $m['text'] ?>
