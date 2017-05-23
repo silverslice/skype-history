@@ -89,7 +89,7 @@ if ($query) {
                 </div>
 
                 <div class="message <?php if ($m['displayname'] != $m['from_dispname']): ?>author<?php endif; ?>">
-                    <?= $m['text'] ?>
+                    <?= nl2br(strip_tags($m['text'])) ?>
                 </div>
             <?php endforeach; ?>
         </div>

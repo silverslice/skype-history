@@ -97,7 +97,7 @@ $conversation = $reader->getConversation($id);
                 <?php endif; ?>
                 <div class="message <?php if ($m['displayname'] != $m['from_dispname']): ?>author<?php endif; ?>">
                     <span class="login"><?= $m['from_dispname'] ?>: </span>
-                    <?= nl2br($m['text']) ?>
+                    <?= nl2br(strip_tags($m['text'])) ?>
                 </div>
                 <?php $last_date = $date ?>
             <?php endforeach; ?>
