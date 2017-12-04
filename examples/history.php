@@ -86,9 +86,9 @@ $conversation = $reader->getConversation($id);
         <?php endforeach; ?>
     </div>
 
-    <?php if ($messages): ?>
-        <div class="messages">
-            <h3><img src="http://api.skype.com/users/<?= $conversation['identity'] ?>/profile/avatar" alt=""> <?= $conversation['identity'] ?>, <?= $conversation['displayname'] ?></h3>
+    <div class="messages">
+        <?php if ($messages): ?>
+            <h3 style="display: none"><img src="http://api.skype.com/users/<?= $conversation['identity'] ?>/profile/avatar" alt=""> <?= $conversation['identity'] ?>, <?= $conversation['displayname'] ?></h3>
             <?php $last_date = 0; ?>
             <?php foreach ($messages as $m) : ?>
                 <?php $date = date('d.m.Y', $m['timestamp']); ?>
@@ -101,7 +101,23 @@ $conversation = $reader->getConversation($id);
                 </div>
                 <?php $last_date = $date ?>
             <?php endforeach; ?>
-        </div>
-    <?php endif; ?>
+        <?php endif; ?>
+
+        <?php
+        $start = date('d.m.Y', $endDate);
+        $end = date('d.m.Y', strtotime('+1 month', $endDate));
+        $nextMonthUrl = "$url?id=$id&start=$start&end=$end";
+
+        $endWeek = date('d.m.Y', strtotime('+1 week', $endDate));
+        $nextWeekUrl = "$url?id=$id&start=$start&end=$endWeek";
+
+        $endDay = date('d.m.Y', strtotime('+1 day', $endDate));
+        $nextDayUrl = "$url?id=$id&start=$start&end=$endDay";
+        ?>
+        <p><a href="<?= $nextMonthUrl ?>">next month</a>,
+            <a href="<?= $nextWeekUrl ?>">next week</a>
+            <a href="<?= $nextDayUrl ?>">next day</a>
+        </p>
+    </div>
 </body>
 </html>
