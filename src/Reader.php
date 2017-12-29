@@ -105,6 +105,23 @@ class Reader
         return $stmt->fetchAll();
     }
 
+    public function getConversationsOrderedByMessageCount()
+    {
+        $stmt = $this->pdo->query("
+            SELECT
+                conversations.id, 
+                max(conversations.identity) as identity, 
+                max(conversations.displayname) as displayname, count(messages.id) as num
+            FROM conversations
+            INNER JOIN messages on conversations.id = messages.convo_id
+            GROUP by conversations.id
+            ORDER BY num desc
+        ");
+        $stmt->execute();
+
+        return $stmt->fetchAll();
+    }
+
     /**
      * Returns history of messages for the conversation id in a specified period of time
      *

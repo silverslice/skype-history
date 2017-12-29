@@ -14,11 +14,17 @@ header('Content-Type: text/html; charset=utf-8');
 
 $url = $_SERVER['PHP_SELF'];
 $id = isset($_GET['id']) ? $_GET['id'] : '';
-$startDate = isset($_GET['start']) ? strtotime($_GET['start']) : strtotime('-1 year');
+$firstActive = isset($_GET['firstActive']) ? 1 : 0;
+$startDate = isset($_GET['start']) ? strtotime($_GET['start']) : strtotime('-5 year');
 $endDate   = isset($_GET['end'])   ? strtotime($_GET['end']) : time();
 
 $reader = new Reader('data/main.db');
-$conversations = $reader->getConversations(strtotime('-10 month'));
+if (!$firstActive) {
+    $conversations = $reader->getConversations($startDate);
+} else {
+    $conversations = $reader->getConversationsOrderedByMessageCount();
+}
+
 $messages = $reader->getHistory($id, $startDate, $endDate);
 $conversation = $reader->getConversation($id);
 
